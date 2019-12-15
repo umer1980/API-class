@@ -122,5 +122,75 @@ public class APIClass {
         response.then().body("body",hasItem("repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"));
         response.prettyPrint();
     }
+    @Test
+    public void delayed(){
+       Response response = given()
+                .with().get("https://reqres.in/api/users?delay=3");
+                    response.then().statusCode(200)
+
+                    .body("data.first_name",hasItems("Emma"))
+                            .body("data.id",hasItems(3))
+                            .body("data.last_name",hasItems("Wong"))
+                            .body("page", is(1));
+                 //   response.prettyPrint();
+    }
+    @Test
+    public void SingleUser(){
+        Response response = given()
+                .when().get("https://reqres.in/api/users/2");
+        response.then().statusCode(200)
+                .body("data.id",is(2));
+    }
+    //post techniques
+    @Test
+    public void RegSuccessful(){
+        Response res =given().contentType("application/json")
+                 .when().body("{\n" +
+                "    \"email\": \"eve.holt@reqres.in\",\n" +
+                "    \"password\": \"pistol\"\n" +
+                "}")
+                .post("https://reqres.in/api/register");
+        //assertion part
+        res.then().body("id",is(4))
+                .statusCode(200);
+        res.prettyPrint();
+    }
+    @Test
+    public void Unsuccessful(){
+        Response res = given().contentType("application/json")
+                .when().body("{\n" +
+                        "    \"email\": \"sydney@fife\"\n" +
+                        "}")
+                .post("https://reqres.in/api/register");
+        res.then().statusCode(400)
+                .body("error",is("Missing password"));
+                res.prettyPrint();
+    }
+    @Test
+    public void LoginSuccessful(){
+//storing payload message in string value
+        String payload = "{\n" +
+                "    \"email\": \"eve.holt@reqres.in\",\n" +
+                "    \"password\": \"cityslicka\"\n" +
+                "}";
+        Response res = given().contentType("application/json")
+                .when().body(payload)
+                .post("https://reqres.in/api/login");
+        res.then().body("token",is("QpwL5tke4Pnpja7X4"))
+                .statusCode(200);
+        res.prettyPrint();
+    }
+    @Test
+    public void LoginUnsucessful(){
+        String payload = "{\n" +
+                "    \"email\": \"peter@klaven\"\n" +
+                "}";
+        Response res = given().contentType("application/json")
+                .when().body(payload)
+                .post("https://reqres.in/api/login");
+        res.then().statusCode(400)
+                .body("error",equalToIgnoringCase("missing password"));
+        res.prettyPrint();
+    }
 }
 
