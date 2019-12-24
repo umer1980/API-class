@@ -2,6 +2,7 @@ package com.dec19.maven;
 
 import io.restassured.response.Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.hamcrest.Matchers;
 import static  io.restassured.RestAssured.given;
@@ -351,7 +352,7 @@ public class APIClass {
 
     }
 
-    @Test
+    @Ignore
     public void CategoriesPost() {
         Response res = given().contentType("application/json")
                 .when().body("{\n" +
